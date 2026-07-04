@@ -23,16 +23,24 @@ export const getGithubToken = async() => {
         throw new Error('No github access token found');
     }
 
+    if (!account.accessToken) {
+        throw new Error('No github access token found');
+    }
+
     return account.accessToken;
 }
 
-export async function fetchUserContribution(token: string, username: string) {
+export async function fetchUserContribution(token: string, username: string | null) {
     const octokit = new Octokit({auth: token});
+
+    if (!username) {
+        throw new Error('GitHub username not found');
+    }
     
     const query = `
     query($username:String!){
         user(login:$username){
-            contributionCollection{
+            contributionsCollection{
                 contributionCalendar{
                     totalContributions
                     weeks{
@@ -49,16 +57,16 @@ export async function fetchUserContribution(token: string, username: string) {
     `
     interface contributionData{
         user: {
-            contributionCollection: {
+            contributionsCollection: {
                 contributionCalendar: {
                     totalContributions: number,
-                    weeks:{
-                        contributionDays:{
+                    weeks: {
+                        contributionDays: {
                             contributionCount:number
                             date:string | Date,
                             color:string
-                        }
-                    }
+                        }[]
+                    }[]
                 }
             }
         }
@@ -69,8 +77,9 @@ export async function fetchUserContribution(token: string, username: string) {
             username
         });
 
-        return response.user.contributionCollection.contributionCalendar;
+        return response.user.contributionsCollection.contributionCalendar;
     } catch(error) {
-
+        console.error('Error fetching contributions graph', error);
+        return null;
     }
 }
