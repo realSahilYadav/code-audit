@@ -4,7 +4,6 @@ import { retrieveContext } from "@/module/ai/lib/rag";
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import prisma from "@/lib/db";
-import { success } from "zod";
 
 export const generateReview = inngest.createFunction({
     id:'generate-review',
