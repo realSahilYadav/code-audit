@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import prisma from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { deleteWebhook } from '@/module/github/lib/github';
+import { decrementRepositoryCount } from '@/module/payment/lib/subscription';
 
 export async function getUserProfile() {
     try{
@@ -131,6 +132,7 @@ export async function disconnectRepository(repositoryId:string) {
         }
 
         await deleteWebhook(repository.owner, repository.name);
+        await decrementRepositoryCount(session.user.id);
 
         await prisma.repository.delete({
             where:{
@@ -167,6 +169,7 @@ export async function disconnectAllRepositories() {
 
         await Promise.all(repositories.map(async (repo) => {
             await deleteWebhook(repo.owner, repo.name);
+            await decrementRepositoryCount(session.user.id);
         }));
 
         const result = await prisma.repository.deleteMany({

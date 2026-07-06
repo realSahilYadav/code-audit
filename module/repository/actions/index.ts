@@ -4,7 +4,8 @@ import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { createWebhook, getRepositories } from "@/module/github/lib/github";
-import { string } from "better-auth";
+import { canConnectRepository, incrementRepositoryCount } from "@/module/payment/lib/subscription";
+import { revalidatePath } from "next/cache";
 import { inngest } from "@/inngest/client";
 
 export const fetchRepositories = async(page:number = 1, perPage:number = 10) => {
@@ -41,7 +42,11 @@ export const connectRepository = async(owner:string, repo:string, githubId:numbe
         throw new Error('Unauthorized');
     }
 
-    //TODO: CHECK IF USER CAN CONNECT MORE REPO
+    const canConnect = await canConnectRepository(session.user.id);
+
+    if (!canConnect) {
+        throw new Error("Repository limit reached. Please upgrade to PRO tier for unlimited repositories");
+    }
 
     const webhook = await createWebhook(owner, repo);
     
@@ -58,7 +63,11 @@ export const connectRepository = async(owner:string, repo:string, githubId:numbe
         });
     }
 
-    //TODO: Increment repo count for usage tracking
+    await incrementRepositoryCount(session.user.id);
+
+    revalidatePath('/dashboard/settings', 'page');
+    revalidatePath('/dashboard/repository', 'page');
+
     try {
         await inngest.send({
             name:"repository.connected",
