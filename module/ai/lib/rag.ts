@@ -6,9 +6,7 @@ const EMBEDDING_DIMENSIONS = 768;
 
 export async function generateEmbedding(text: string): Promise<number[]> {
     const { embedding } = await embed({
-        model: google.embedding("gemini-embedding-2", {
-            outputDimensionality: 768,
-        }),
+        model: google.embedding("gemini-embedding-2"),
         value: text,
         providerOptions: {
             google: {
