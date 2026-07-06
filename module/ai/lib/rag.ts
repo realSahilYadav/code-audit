@@ -2,12 +2,19 @@ import { embed } from "ai";
 import { google } from "@ai-sdk/google";
 import { pineconeIndex } from "@/lib/pinecone";
 
+const EMBEDDING_DIMENSIONS = 768;
+
 export async function generateEmbedding(text: string): Promise<number[]> {
     const { embedding } = await embed({
         model: google.embedding("gemini-embedding-2", {
             outputDimensionality: 768,
         }),
         value: text,
+        providerOptions: {
+            google: {
+                outputDimensionality: EMBEDDING_DIMENSIONS,
+            },
+        },
     });
 
     return embedding;
