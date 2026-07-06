@@ -35,3 +35,5 @@ export const indexRepo = inngest.createFunction(
     return {success:true, indexedFiles:files.length}; 
   }
 )
+
+export { generateReview } from "./review";

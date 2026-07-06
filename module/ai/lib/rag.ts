@@ -4,7 +4,9 @@ import { pineconeIndex } from "@/lib/pinecone";
 
 export async function generateEmbedding(text: string): Promise<number[]> {
     const { embedding } = await embed({
-        model: google.embedding("gemini-embedding-005"),
+        model: google.embedding("gemini-embedding-2", {
+            outputDimensionality: 768,
+        }),
         value: text,
     });
 

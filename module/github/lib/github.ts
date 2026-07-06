@@ -122,7 +122,7 @@ export const createWebhook = async(owner:string, repo:string) => {
             url:webhookUrl,
             content_type:'json',
         },
-        events:['pull request']
+        events:['pull_request']
     });
 
     return data;
@@ -142,7 +142,7 @@ export const deleteWebhook = async(owner:string, repo:string) => {
         const hookToDelete = hooks.find(hook=>hook.config.url === webhookUrl);
 
         if(hookToDelete) {
-            await octokit.rest.repos.createWebhook({
+            await octokit.rest.repos.deleteWebhook({
                 owner,
                 repo,
                 hook_id:hookToDelete.id
@@ -205,4 +205,40 @@ export const getRepoFileContent = async(
     }
 
     return files;
+}
+
+export async function getPullRequestDiff (token:string, owner:string, repo:string, prNumber:number) {
+    const octokit = new Octokit( {auth:token} );
+
+    const {data:pr} = await octokit.rest.pulls.get({
+        owner,
+        repo,
+        pull_number:prNumber
+    });
+
+    const {data:diff} = await octokit.rest.pulls.get({
+        owner,
+        repo,
+        pull_number:prNumber,
+        mediaType:{
+            format:"diff"
+        }
+    });
+
+    return {
+        diff: diff as unknown as string,
+        title: pr.title,
+        description: pr.body || ""
+    };
+}
+
+export async function postReviewComment(token:string, owner:string, repo:string, prNumber:number, review:string) {
+    const octokit = new Octokit({ auth:token });
+
+    await octokit.rest.issues.createComment({
+        owner,
+        repo,
+        issue_number:prNumber,
+        body: `## 🤖 AI Code Review\n\n${review}\n\n---\n*Powered by CodeAudit*`,
+    });
 }
