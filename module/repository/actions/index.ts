@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { createWebhook, getRepositories } from "@/module/github/lib/github";
 import { string } from "better-auth";
+import { inngest } from "@/inngest/client";
 
 export const fetchRepositories = async(page:number = 1, perPage:number = 10) => {
     const session = await auth.api.getSession({
@@ -58,7 +59,18 @@ export const connectRepository = async(owner:string, repo:string, githubId:numbe
     }
 
     //TODO: Increment repo count for usage tracking
-    //TODO: trigger repo indexing for rag (fire and forget)
+    try {
+        await inngest.send({
+            name:"repository.connected",
+            data:{
+                owner,
+                repo,
+                userId:session.user.id
+            }
+        });
+    } catch (error) {
+        console.error("Failed to trigger repository indexing: ", error);
+    }
 
     return webhook;
 }

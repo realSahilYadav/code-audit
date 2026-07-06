@@ -8,7 +8,7 @@ Styling & UI: Tailwind CSS, Radix UI, Shadcn UI primitives, Recharts (for dashbo
 Authentication: Better Auth (coupled with GitHub OAuth provider)
 Database & ORM: Prisma 7 + Cloud Postgre SQL (Neon server serverless database)
 Event-Driven Workflows: Inngest (handles asynchronous durable execution, RAG synchronization, and webhooks)
-AI Ecosystem: Vercel AI SDK, Google Gemini AI (Defaulting to gemini-3.5-flash model), Google Text Embeddings (text-embedding-2)
+AI Ecosystem: Vercel AI SDK, Google Gemini AI (Defaulting to gemini-3.5-flash model), Google Text Embeddings (text-embedding-005)
 Vector DB Engine: Pinecone (Vector dimensions: 768, metrics: cosine)
 Payments: Polar SH (Subscriptions & Metered Usage engine)
 
