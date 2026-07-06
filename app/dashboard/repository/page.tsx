@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRepositories } from "@/module/repository/hooks/use-repositories";
 import { RepositoryCardSkeleton } from "@/module/repository/components/repository-skeleton";
-import { useConnectRepository } from "@/modules/repository/hooks/useConnectRepository";
+import { useConnectRepository } from "@/module/repository/hooks/use-connect-repository";
 import { Search } from "lucide-react";
 
 export interface Repository {
@@ -23,17 +23,14 @@ export interface Repository {
 }
 
 export default function RepositoryPage() {
-    // Infinite scroll hook containing data and pagination states
     const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useRepositories();
 
     const [searchQuery, setSearchQuery] = useState("");
     const observerTarget = useRef<HTMLDivElement>(null);
     const [localConnectingId, setLocalConnectingId] = useState<number | null>(null);
 
-    // Hook handling the repo connection mutation
     const { mutate: connectRepo } = useConnectRepository();
 
-    // Infinite Scroll Intersection Observer
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -56,7 +53,6 @@ export default function RepositoryPage() {
         };
     }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    // Connects the repo and triggers the background indexing
     const handleConnect = (repo: Repository) => {
         setLocalConnectingId(repo.id);
         const owner = repo.full_name.split("/")[0];
@@ -65,7 +61,7 @@ export default function RepositoryPage() {
             {
                 owner,
                 repo: repo.name,
-                ghId: repo.id,
+                githubId: repo.id,
             },
             {
                 onSettled: () => setLocalConnectingId(null),
