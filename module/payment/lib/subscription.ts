@@ -1,9 +1,20 @@
 "use server"
 
 import prisma from "@/lib/db";
+import { polarClient } from "@/module/payment/config/polar";
+import { revalidatePath } from "next/cache";
 
 export type SubscriptionTier = "FREE" | "PRO";
 export type SubscriptionStatus = "ACTIVE" | "CANCELLED" | "EXPIRED";
+export type PolarSubscriptionStatus =
+    | "incomplete"
+    | "incomplete_expired"
+    | "trialing"
+    | "active"
+    | "past_due"
+    | "canceled"
+    | "unpaid"
+    | string;
 
 export interface UserLimits {
     tier: SubscriptionTier;
@@ -23,7 +34,7 @@ export interface UserLimits {
 
 const TIER_LIMITS = {
     FREE: {
-        repositories: 1,
+        repositories: 5,
         reviewsPerRepo: 5,
     },
     PRO: {
@@ -170,14 +181,109 @@ export async function updateUserTier(
     userId: string,
     tier: SubscriptionTier,
     status: SubscriptionStatus,
-    polarSubscriptionId?: string
+    polarSubscriptionId?: string | null
 ): Promise<void> {
     await prisma.user.update({
         where: { id: userId },
         data: {
             subscriptionTier: tier,
             subscriptionStatus: status,
-          
+            ...(polarSubscriptionId !== undefined ? { polarSubscriptionId } : {}),
         },
     });
+
+    revalidatePath("/dashboard/subscription", "page");
+}
+
+export async function updatePolarCustomerId(userId:string, polarCustomerId:string):Promise<void> {
+    await prisma.user.update({
+        where:{
+            id:userId
+        },
+        data:{
+            polarCustomerId
+        }
+    });
+
+    revalidatePath("/dashboard/subscription", "page");
+}
+
+export async function getLocalSubscriptionState(status: PolarSubscriptionStatus): Promise<{
+  tier: SubscriptionTier;
+  status: SubscriptionStatus;
+}> {
+    const normalizedStatus = status.toLowerCase();
+
+    if (normalizedStatus === "active" || normalizedStatus === "trialing") {
+        return { tier: "PRO", status: "ACTIVE" };
+    }
+
+    if (normalizedStatus === "canceled") {
+        return { tier: "FREE", status: "CANCELLED" };
+    }
+
+    return { tier: "FREE", status: "EXPIRED" };
+}
+
+export async function syncPolarCustomerState(userId: string, email: string): Promise<void> {
+    try {
+        let customerId: string | null = null;
+        let activeSubscriptionId: string | null = null;
+        let subscriptionStatus: SubscriptionStatus = "EXPIRED";
+        let subscriptionTier: SubscriptionTier = "FREE";
+
+        try {
+            const customerState = await polarClient.customers.getStateExternal({
+                externalId: userId,
+            });
+
+            customerId = customerState.id;
+
+            const activeSubscription = customerState.activeSubscriptions[0];
+            if (activeSubscription) {
+                activeSubscriptionId = activeSubscription.id;
+                subscriptionStatus = "ACTIVE";
+                subscriptionTier = "PRO";
+            }
+        } catch {
+            const customers = await polarClient.customers.list({
+                email,
+            });
+
+            const customer = customers.result.items[0];
+
+            if (!customer) {
+                return;
+            }
+
+            customerId = customer.id;
+
+            const customerState = await polarClient.customers.getState({
+                id: customer.id,
+            });
+
+            const activeSubscription = customerState.activeSubscriptions[0];
+            if (activeSubscription) {
+                activeSubscriptionId = activeSubscription.id;
+                subscriptionStatus = "ACTIVE";
+                subscriptionTier = "PRO";
+            }
+        }
+
+        if (!customerId) {
+            return;
+        }
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: {
+                polarCustomerId: customerId,
+                polarSubscriptionId: activeSubscriptionId,
+                subscriptionStatus,
+                subscriptionTier,
+            },
+        });
+    } catch (error) {
+        console.error("Failed to sync Polar customer state:", error);
+    }
 }

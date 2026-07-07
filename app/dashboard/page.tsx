@@ -99,7 +99,7 @@ const MainPage = () => {
           </CardHeader>
           <CardContent>
             {
-              isLoading ? (
+              isLoadingActivity ? (
                 <div className='h-80 w-full flex items-center justify-center'>
                   <Spinner />
                 </div>

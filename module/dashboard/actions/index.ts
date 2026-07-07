@@ -4,6 +4,7 @@ import { getGithubToken } from "@/module/github/lib/github"
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Octokit } from "octokit";
+import prisma from "@/lib/db";
 
 type ContributionCalendar = {
     totalContributions: number;
@@ -22,6 +23,16 @@ type SearchIssue = {
     created_at: string;
     updated_at?: string | null;
 };
+
+async function getUserGeneratedReviewCount(userId: string) {
+    return prisma.review.count({
+        where: {
+            repository: {
+                userId,
+            },
+        },
+    });
+}
 
 async function getContributionCalendar(token: string, login: string) {
     const octokit = new Octokit({ auth: token });
@@ -156,12 +167,7 @@ export async function getDashboardStats() {
         }
 
         try {
-            const { data: reviews } = await octokit.rest.search.issuesAndPullRequests({
-                q: `reviewed-by:${githubLogin} is:pr`,
-                per_page: 100,
-            })
-
-            totalReviews = reviews.total_count;
+            totalReviews = await getUserGeneratedReviewCount(session.user.id);
         } catch (error) {
             console.error("Error fetching review count:", error);
         }
@@ -250,13 +256,22 @@ export async function getMonthlyActivity() {
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
 
-        const { data: reviewedPullRequests } = await octokit.rest.search.issuesAndPullRequests({
-            q: `reviewed-by:${githubLogin} is:pr created:>${sixMonthsAgo.toISOString().split("T")[0]}`,
-            per_page: 100,
+        const generatedReviews = await prisma.review.findMany({
+            where: {
+                repository: {
+                    userId: session.user.id,
+                },
+                createdAt: {
+                    gte: sixMonthsAgo,
+                },
+            },
+            select: {
+                createdAt: true,
+            },
         });
 
-        reviewedPullRequests.items.forEach((pr: SearchIssue) => {
-            const date = new Date(pr.updated_at ?? pr.created_at);
+        generatedReviews.forEach((review) => {
+            const date = review.createdAt;
             const monthKey = monthNames[date.getMonth()];
             if (monthlyData[monthKey]) {
                 monthlyData[monthKey].reviews += 1;

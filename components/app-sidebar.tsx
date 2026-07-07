@@ -25,6 +25,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -39,13 +40,8 @@ import Logout from "@/module/auth/components/logout";
 
 const AppSidebar = () => {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const navigationItems = [
     { title: "Dashboard", url: "/dashboard", icon: BookOpen },
@@ -56,10 +52,10 @@ const AppSidebar = () => {
   ];
 
   const isActive = (url: string) => {
-    return pathname === url || pathname.startsWith(url + "/dashboard");
+    return pathname === url || pathname.startsWith(`${url}/`);
   };
 
-  if (!mounted || !session) return null;
+  if (!session) return null;
 
   const user = session.user;
   const username = user?.name || "Guest";
@@ -74,22 +70,21 @@ const AppSidebar = () => {
 
   return (
     <Sidebar collapsible="icon" className="border-r">
-      {/* Sidebar Header: Connected GitHub Status Platform Title */}
-      <SidebarHeader className="border-b px-4 py-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+      <SidebarHeader className="border-b px-3 py-3 group-data-[collapsible=icon]:px-2">
+        <div className="flex h-10 items-center gap-3 group-data-[collapsible=icon]:justify-center">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground group-data-[collapsible=icon]:hidden">
             <ShieldCheck className="h-5 w-5" />
           </div>
-          <div className="flex flex-col grid-flow-row truncate">
+          <div className="flex flex-col grid-flow-row truncate group-data-[collapsible=icon]:hidden">
             <span className="font-semibold text-foreground leading-none">CodeAudit</span>
             <span className="text-xs text-muted-foreground mt-1">AI Integrity Engine</span>
           </div>
+          <SidebarTrigger className="ml-auto group-data-[collapsible=icon]:ml-0" />
         </div>
       </SidebarHeader>
 
-      {/* Sidebar Navigation Content */}
-      <SidebarContent className="px-3 py-6 flex flex-col gap-1">
-        <div className="mb-2 px-2">
+      <SidebarContent className="px-3 py-4 flex flex-col gap-1 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-2">
+        <div className="mb-2 px-2 group-data-[collapsible=icon]:hidden">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Menu
           </p>
@@ -104,7 +99,7 @@ const AppSidebar = () => {
                   asChild
                   isActive={active}
                   tooltip={item.title}
-                  className="w-full"
+                  className="w-full group-data-[collapsible=icon]:justify-center"
                 >
                   <Link href={item.url} className="flex items-center gap-3">
                     <Icon className="h-4 w-4 shrink-0" />
@@ -117,21 +112,20 @@ const AppSidebar = () => {
         </SidebarMenu>
       </SidebarContent>
 
-      {/* Sidebar Footer: Profile Dropdown Menu */}
-      <SidebarFooter className="border-t px-3 py-4">
+      <SidebarFooter className="border-t px-3 py-4 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-2">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="w-full data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  className="w-full data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={userImage} alt={username} />
                     <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight truncate">
+                  <div className="grid flex-1 text-left text-sm leading-tight truncate group-data-[collapsible=icon]:hidden">
                     <span className="truncate font-semibold">{username}</span>
                     <span className="truncate text-xs text-muted-foreground">{userEmail}</span>
                   </div>
@@ -158,7 +152,6 @@ const AppSidebar = () => {
                 
                 <DropdownMenuSeparator />
                 
-                {/* Theme Configuration */}
                 <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1">
                   Theme
                 </DropdownMenuLabel>
@@ -180,7 +173,6 @@ const AppSidebar = () => {
 
                 <DropdownMenuSeparator />
 
-                {/* Logout Trigger */}
                 <Logout>
                   <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4 shrink-0" />
