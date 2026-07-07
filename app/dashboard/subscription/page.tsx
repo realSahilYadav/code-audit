@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,7 +33,7 @@ const PLAN_FEATURES = {
   ],
 };
 
-export default function SubscriptionPage() {
+function SubscriptionContent() {
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
 
@@ -291,5 +291,17 @@ export default function SubscriptionPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function SubscriptionPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center mt-20">
+        <Spinner />
+      </div>
+    }>
+      <SubscriptionContent />
+    </Suspense>
   );
 }

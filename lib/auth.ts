@@ -25,7 +25,12 @@ export const auth = betterAuth({
             scope:["repo"]
         }
     },
-    trustedOrigins: ["http://localhost:3000/", "https://hastily-unsettled-bodacious.ngrok-free.dev"],
+    trustedOrigins: [
+        "http://localhost:3000/",
+        "https://hastily-unsettled-bodacious.ngrok-free.dev",
+        process.env.NEXT_PUBLIC_APP_BASE_URL || "",
+        process.env.BETTER_AUTH_URL || ""
+    ].filter(Boolean),
     plugins:[
         polar({
             client: polarClient,

@@ -1,19 +1,19 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { signIn } from '@/lib/auth-client';
-import { 
-  TerminalIcon, 
-  ShieldCheckIcon, 
-  ArrowRightIcon, 
-  GitPullRequestIcon, 
-  CodeIcon, 
-  ZapIcon, 
-  DatabaseIcon, 
-  LockIcon, 
-  CheckIcon, 
-  SparklesIcon, 
-  ActivityIcon, 
-  CreditCardIcon 
+import {
+  TerminalIcon,
+  ShieldCheckIcon,
+  ArrowRightIcon,
+  GitPullRequestIcon,
+  CodeIcon,
+  ZapIcon,
+  DatabaseIcon,
+  LockIcon,
+  CheckIcon,
+  SparklesIcon,
+  ActivityIcon,
+  CreditCardIcon
 } from 'lucide-react';
 
 const GithubIcon = ({ className, ...props }: React.ComponentProps<"svg">) => (
@@ -111,7 +111,7 @@ const LoginUI = () => {
             <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub docs</a>
           </nav>
 
-          <button 
+          <button
             onClick={handleGitHubLogin}
             disabled={isLoading}
             className="group inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-zinc-900 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800/80 rounded-lg transition-all text-zinc-300 hover:text-white"
@@ -125,7 +125,7 @@ const LoginUI = () => {
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center px-6 py-16 md:py-24 max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full">
-          
+
           {/* Hero Left: Title and Action */}
           <div className="lg:col-span-7 flex flex-col items-start space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide">
@@ -159,7 +159,7 @@ const LoginUI = () => {
                 <ArrowRightIcon className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
               </button>
 
-              <a 
+              <a
                 href="#features"
                 className="flex items-center justify-center gap-2 px-6 py-4 bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 font-semibold rounded-xl text-zinc-300 hover:text-white transition-all"
               >
@@ -182,7 +182,7 @@ const LoginUI = () => {
           {/* Hero Right: Interactive Mock Terminal */}
           <div className="lg:col-span-5 w-full">
             <div className="w-full bg-[#0D0B14] rounded-2xl border border-zinc-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col">
-              
+
               {/* Terminal Header */}
               <div className="flex items-center justify-between px-4 py-3 bg-[#08070C] border-b border-zinc-800/80">
                 <div className="flex items-center gap-2">
@@ -231,7 +231,7 @@ const LoginUI = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-            
+
             {/* Feature 1: Webhooks */}
             <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-6 hover:border-zinc-700/80 transition-all hover:translate-y-[-2px] group">
               <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20 text-blue-400 w-fit mb-6 group-hover:scale-110 transition-transform">
@@ -293,7 +293,7 @@ const LoginUI = () => {
               <p className="text-zinc-400">
                 We enforce database-backed limits. Get started for free, and upgrade to Pro powered by Polar.sh.
               </p>
-              
+
               <ul className="space-y-3.5 text-zinc-400 text-sm">
                 <li className="flex items-center gap-3">
                   <div className="p-0.5 rounded-full bg-emerald-500/15 text-emerald-400">
@@ -317,7 +317,7 @@ const LoginUI = () => {
             </div>
 
             <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
-              
+
               {/* Free Tier Card */}
               <div className="bg-[#0D0B14] border border-zinc-800 rounded-2xl p-8 space-y-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-500/5 rounded-full blur-2xl pointer-events-none" />
@@ -329,7 +329,7 @@ const LoginUI = () => {
                 <ul className="space-y-3 text-sm text-zinc-400">
                   <li className="flex items-center gap-2">
                     <CheckIcon className="w-4 h-4 text-emerald-400" />
-                    <span>Up to 5 total repositories</span>
+                    <span>Up to 1 repository</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="w-4 h-4 text-emerald-400" />
@@ -337,10 +337,10 @@ const LoginUI = () => {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="w-4 h-4 text-emerald-400" />
-                    <span>Gemini 3.5 AI scanning</span>
+                    <span>Gemini 2.5 AI scanning</span>
                   </li>
                 </ul>
-                <button 
+                <button
                   onClick={handleGitHubLogin}
                   className="w-full py-3 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800/80 rounded-xl transition-all font-semibold text-xs text-zinc-200"
                 >
@@ -355,7 +355,7 @@ const LoginUI = () => {
                 </div>
                 <div>
                   <h4 className="text-primary text-sm font-semibold uppercase tracking-wider">Pro Tier</h4>
-                  <p className="text-2xl font-bold text-white mt-2">$15 <span className="text-sm text-zinc-500 font-normal">/ month</span></p>
+                  <p className="text-2xl font-bold text-white mt-2">$44.99 <span className="text-sm text-zinc-500 font-normal">/ month</span></p>
                 </div>
                 <div className="h-px bg-zinc-800" />
                 <ul className="space-y-3 text-sm text-zinc-400">
@@ -372,7 +372,7 @@ const LoginUI = () => {
                     <span>Priority background queues</span>
                   </li>
                 </ul>
-                <button 
+                <button
                   onClick={handleGitHubLogin}
                   className="w-full py-3 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all font-semibold text-xs shadow-md shadow-primary/25"
                 >
