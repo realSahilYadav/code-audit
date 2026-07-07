@@ -1,5 +1,7 @@
 # CodeAudit
 
+Live deployment: [code-audit-navy.vercel.app](https://code-audit-navy.vercel.app)
+
 This project is currently under development.
 
 CodeAudit is an AI-powered automated code review and codebase audit platform. It registers and indexes GitHub repositories, performs vector embeddings on codebase contents for semantic retrieval (RAG), processes pull request webhooks to automatically review diffs, and generates structured walkthroughs, security analysis, flow charts, and feedback.
