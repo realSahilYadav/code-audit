@@ -192,7 +192,6 @@ export async function updateUserTier(
         },
     });
 
-    revalidatePath("/dashboard/subscription", "page");
 }
 
 export async function updatePolarCustomerId(userId: string, polarCustomerId: string): Promise<void> {
@@ -205,7 +204,6 @@ export async function updatePolarCustomerId(userId: string, polarCustomerId: str
         }
     });
 
-    revalidatePath("/dashboard/subscription", "page");
 }
 
 export async function getLocalSubscriptionState(status: PolarSubscriptionStatus): Promise<{
