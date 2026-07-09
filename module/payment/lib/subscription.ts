@@ -34,7 +34,7 @@ export interface UserLimits {
 
 const TIER_LIMITS = {
     FREE: {
-        repositories: 5,
+        repositories: 1,
         reviewsPerRepo: 5,
     },
     PRO: {
@@ -195,12 +195,12 @@ export async function updateUserTier(
     revalidatePath("/dashboard/subscription", "page");
 }
 
-export async function updatePolarCustomerId(userId:string, polarCustomerId:string):Promise<void> {
+export async function updatePolarCustomerId(userId: string, polarCustomerId: string): Promise<void> {
     await prisma.user.update({
-        where:{
-            id:userId
+        where: {
+            id: userId
         },
-        data:{
+        data: {
             polarCustomerId
         }
     });
@@ -209,8 +209,8 @@ export async function updatePolarCustomerId(userId:string, polarCustomerId:strin
 }
 
 export async function getLocalSubscriptionState(status: PolarSubscriptionStatus): Promise<{
-  tier: SubscriptionTier;
-  status: SubscriptionStatus;
+    tier: SubscriptionTier;
+    status: SubscriptionStatus;
 }> {
     const normalizedStatus = status.toLowerCase();
 
