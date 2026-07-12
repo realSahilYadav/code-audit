@@ -39,8 +39,7 @@ export function RepositoryList() {
     onSuccess: (result) => {
       if (result?.success) {
         queryClient.invalidateQueries({ queryKey: ["connectedRepositories"] });
-        queryClient.invalidateQueries({ queryKey: ["repositories"] });
-        queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+        queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
         toast.success("Repository disconnected successfully.");
       }
     },
@@ -57,8 +56,7 @@ export function RepositoryList() {
     onSuccess: (result) => {
       if (result?.success) {
         queryClient.invalidateQueries({ queryKey: ["connectedRepositories"] });
-        queryClient.invalidateQueries({ queryKey: ["repositories"] });
-        queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+        queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
         toast.success("All repositories disconnected successfully.");
         setDisconnectAllOpen(false);
       }
