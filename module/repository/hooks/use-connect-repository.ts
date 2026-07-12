@@ -13,7 +13,9 @@ export const useConnectRepository = () => {
         },
         onSuccess:() => {
             toast.success('Repository connected successfully');
-            queryClient.invalidateQueries({queryKey:['repository']});
+            queryClient.invalidateQueries({queryKey:['repositories']});
+            queryClient.invalidateQueries({queryKey:['connectedRepositories']});
+            queryClient.invalidateQueries({queryKey:['dashboard-stats']});
         },
         onError:(error) => {
             toast.error('Failed to connect repository');
