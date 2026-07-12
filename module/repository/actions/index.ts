@@ -61,9 +61,9 @@ export const connectRepository = async (owner: string, repo: string, githubId: n
                 userId: session.user.id
             }
         });
-        await incrementRepositoryCount(session.user.id);
     }
 
+    await incrementRepositoryCount(session.user.id);
 
     revalidatePath('/dashboard/settings', 'page');
     revalidatePath('/dashboard/repository', 'page');
